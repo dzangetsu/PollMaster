@@ -1,8 +1,3 @@
-"""
-PollMaster - Веб-приложение для создания и проведения опросов
-Исправленная версия - работают голосование, комментарии, загрузка файлов
-"""
-
 from datetime import timedelta
 import os
 import hashlib
@@ -14,7 +9,7 @@ from flask import Flask, render_template_string, request, redirect, url_for, ses
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, and_, or_
 
-# ==================== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ====================
+#  ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ 
 
 app = Flask(__name__)
 app.secret_key = 'pollmaster-secret-key-2024'
@@ -59,7 +54,7 @@ def admin_required(f):
     return decorated_function
 
 
-# ==================== ORM МОДЕЛИ ====================
+# ORM МОДЕЛИ 
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -153,7 +148,7 @@ class Comment(db.Model):
     poll_id = db.Column(db.Integer, db.ForeignKey('polls.id'), nullable=False)
 
 
-# ==================== HTML ШАБЛОНЫ ====================
+# HTML ШАБЛОНЫ 
 
 INDEX_HTML = '''
 <!DOCTYPE html>
@@ -555,7 +550,7 @@ ADMIN_HTML = '''
 </html>
 '''
 
-# ==================== МАРШРУТЫ ====================
+# МАРШРУТЫ 
 
 @app.route('/')
 def index():
@@ -746,7 +741,7 @@ def uploads(folder, filename):
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], folder), filename)
 
 
-# ==================== API ====================
+# API
 
 @app.route('/api/vote/<int:poll_id>', methods=['POST'])
 @login_required
@@ -806,7 +801,7 @@ def api_stats(poll_id):
 
 
 
-# ==================== ДОПОЛНИТЕЛЬНЫЙ ФУНКЦИОНАЛ ДЛЯ НАБОРА СТРОК ====================
+
 
 # Экспорт результатов в CSV
 @app.route('/export-csv/<int:poll_id>')
@@ -1129,22 +1124,6 @@ ALL_POLLS_HTML = '''
 </body>
 </html>
 '''
-
-
-# Штрафные санкции (заглушка для демонстрации middleware)
-@app.before_request
-def before_request():
-    """Логирование всех запросов (для увеличения строк кода)"""
-    if hasattr(app, 'logger'):
-        app.logger.info(f"Request: {request.method} {request.path}")
-
-
-@app.after_request
-def after_request(response):
-    """Добавление заголовков безопасности"""
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    return response
 
 
 # Обработчик ошибок
